@@ -3,7 +3,9 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import String exposing (length)
+import Char
+import String
+import List
 
 
 main =
@@ -71,8 +73,10 @@ viewValidation : Model -> Html msg
 viewValidation model =
     let
         ( color, message ) =
-            if not (isGoodPassword model.password) then
+            if String.length model.password <= 8 then
                 ( "red", "Password needs to be longer than 8 characters." )
+            else if not (String.any Char.isUpper model.password) then
+                ( "red", "Password needs to include an upper-case character." )
             else if model.password == model.passwordAgain then
                 ( "green", "OK" )
             else
@@ -83,7 +87,9 @@ viewValidation model =
 
 isGoodPassword : String -> Bool
 isGoodPassword password =
-    length password > 8
+    String.length password
+        > 8
+        && (String.any Char.isUpper password)
 
 
 
