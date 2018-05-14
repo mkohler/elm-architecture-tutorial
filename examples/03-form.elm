@@ -42,6 +42,7 @@ type Msg
     | Password String
     | PasswordAgain String
     | Age String
+    | Submit
 
 
 update : Msg -> Model -> Model
@@ -58,6 +59,9 @@ update msg model =
 
         Age age ->
             { model | age = age }
+
+        Submit ->
+
 
 
 
