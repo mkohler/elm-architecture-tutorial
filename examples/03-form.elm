@@ -2,7 +2,7 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onClick, onInput)
 import Char
 import String
 import List
@@ -25,12 +25,13 @@ type alias Model =
     , password : String
     , passwordAgain : String
     , age : String
+    , error : String
     }
 
 
 model : Model
 model =
-    Model "" "" "" ""
+    Model "" "" "" "" ""
 
 
 
@@ -61,7 +62,7 @@ update msg model =
             { model | age = age }
 
         Submit ->
-
+            { model | error = validate model }
 
 
 
@@ -75,12 +76,13 @@ view model =
         , input [ type_ "password", placeholder "Password", onInput Password ] []
         , input [ type_ "password", placeholder "Re-enter Password", onInput PasswordAgain ] []
         , input [ type_ "text", placeholder "Age", onInput Age ] []
-        , viewValidation model
+        , button [ onClick Submit ] [ text "Submit" ]
+        , div [] [ text (model.error) ]
         ]
 
 
-viewValidation : Model -> Html msg
-viewValidation model =
+validate : Model -> String
+validate model =
     let
         age_okay : Bool
         age_okay =
@@ -91,27 +93,16 @@ viewValidation model =
                 Ok _ ->
                     True
 
-        ( color, message ) =
+        message =
             if String.length model.password <= 8 then
-                ( "red", "Password needs to be longer than 8 characters." )
+                "Password needs to be longer than 8 characters."
             else if not (String.any Char.isUpper model.password) then
-                ( "red", "Password needs to include an upper-case character." )
+                "Password needs to include an upper-case character."
             else if model.password /= model.passwordAgain then
-                ( "red", "Passwords do not match!" )
+                "Passwords do not match!"
             else if not age_okay then
-                ( "red", "Age must be a number." )
+                "Age must be a number."
             else
-                ( "green", "OK" )
+                "OK"
     in
-        div [ style [ ( "color", color ) ] ] [ text message ]
-
-
-isGoodPassword : String -> Bool
-isGoodPassword password =
-    String.length password
-        > 8
-        && (String.any Char.isUpper password)
-
-
-
--- isGoodPassword password =
+        message
