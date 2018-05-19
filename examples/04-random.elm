@@ -21,13 +21,14 @@ main =
 
 
 type alias Model =
-    { dieFace : Int
+    { dieFace1 : Int
+    , dieFace2 : Int
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model 1, Cmd.none )
+    ( Model 1 1, Cmd.none )
 
 
 
@@ -36,17 +37,17 @@ init =
 
 type Msg
     = Roll
-    | NewFace Int
+    | NewFaces ( Int, Int )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Roll ->
-            ( model, Random.generate NewFace (Random.int 1 6) )
+            ( model, Random.generate NewFaces (Random.pair (Random.int 1 6) (Random.int 1 6)) )
 
-        NewFace newFace ->
-            ( Model newFace, Cmd.none )
+        NewFaces ( x1, x2 ) ->
+            ( Model x1 x2, Cmd.none )
 
 
 
@@ -67,7 +68,10 @@ view model =
     div []
         [ button [ onClick Roll ] [ text "Roll" ]
         , img
-            [ src (getDieFace model.dieFace) ]
+            [ src (getDieFace model.dieFace1) ]
+            []
+        , img
+            [ src (getDieFace model.dieFace2) ]
             []
         ]
 
