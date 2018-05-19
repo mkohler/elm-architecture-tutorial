@@ -72,10 +72,6 @@ view model =
         ]
 
 
-
---[ src (getDieFace model.dieFace) ]
-
-
 getDieFace : Int -> String
 getDieFace val =
     "Dice-" ++ toString (val) ++ ".svg"
