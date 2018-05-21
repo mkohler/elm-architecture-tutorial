@@ -40,6 +40,7 @@ init topic =
 
 type Msg
     = MorePlease
+    | NewTopic String
     | NewGif (Result Http.Error String)
 
 
@@ -54,6 +55,9 @@ update msg model =
 
         NewGif (Err err) ->
             ( { model | error = errorToString (err) }, Cmd.none )
+
+        NewTopic s ->
+            ( { model | topic = s }, Cmd.none )
 
 
 errorToString : Http.Error -> String
@@ -83,6 +87,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ h2 [] [ text model.topic ]
+        , input [ placeholder model.topic, onInput NewTopic ] []
         , button [ onClick MorePlease ] [ text "More Please!" ]
         , br [] []
         , img [ src model.gifUrl ] []
