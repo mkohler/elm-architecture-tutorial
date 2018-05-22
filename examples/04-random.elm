@@ -68,9 +68,9 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Roll ] [ text "Roll" ]
-        , drawDie model.dieFace1
+        [ drawDie model.dieFace1
         , drawDie model.dieFace2
+        , button [ onClick Roll ] [ text "Roll" ]
         ]
 
 
