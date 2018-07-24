@@ -79,14 +79,14 @@ view model =
             else
                 "#023963"
 
-        angle =
+        secondAngle =
             turns (Time.inMinutes model.time)
 
-        handX =
-            toString (50 + 40 * cos angle)
+        secondHandX =
+            toString (50 + 40 * cos secondAngle)
 
-        handY =
-            toString (50 + 40 * sin angle)
+        secondHandY =
+            toString (50 + 40 * sin secondAngle)
 
         button_title =
             if model.paused then
@@ -97,7 +97,7 @@ view model =
         div []
             [ svg [ viewBox "0 0 100 100", width "300px" ]
                 [ circle [ cx "50", cy "50", r "45", fill circle_color ] []
-                , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke line_color ] []
+                , line [ x1 "50", y1 "50", x2 secondHandX, y2 secondHandY, stroke line_color ] []
                 ]
             , button [ onClick TogglePause ] [ Html.text button_title ]
             ]
