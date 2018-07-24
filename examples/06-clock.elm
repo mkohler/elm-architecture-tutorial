@@ -46,9 +46,9 @@ update msg model =
     case msg of
         Tick newTime ->
             if model.paused then
-                ( { model | time = newTime }, Cmd.none )
-            else
                 ( model, Cmd.none )
+            else
+                ( { model | time = newTime }, Cmd.none )
 
         TogglePause ->
             ( { model | paused = not model.paused }, Cmd.none )
@@ -78,11 +78,17 @@ view model =
 
         handY =
             toString (50 + 40 * sin angle)
+
+        button_title =
+            if model.paused then
+                "Play"
+            else
+                "Pause"
     in
         div []
             [ svg [ viewBox "0 0 100 100", width "300px" ]
                 [ circle [ cx "50", cy "50", r "45", fill "#0B79CE" ] []
                 , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke "#023963" ] []
                 ]
-            , button [ onClick TogglePause ] [ Html.text "Pause" ]
+            , button [ onClick TogglePause ] [ Html.text button_title ]
             ]
