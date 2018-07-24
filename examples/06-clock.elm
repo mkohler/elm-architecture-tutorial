@@ -29,7 +29,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { time = 0.0, paused = False }, Cmd.none )
+    ( { time = 0, paused = False }, Cmd.none )
 
 
 
@@ -70,6 +70,15 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
+        circle_color =
+            "#0B79CE"
+
+        line_color =
+            if model.time == 0 then
+                circle_color
+            else
+                "#023963"
+
         angle =
             turns (Time.inMinutes model.time)
 
@@ -87,8 +96,8 @@ view model =
     in
         div []
             [ svg [ viewBox "0 0 100 100", width "300px" ]
-                [ circle [ cx "50", cy "50", r "45", fill "#0B79CE" ] []
-                , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke "#023963" ] []
+                [ circle [ cx "50", cy "50", r "45", fill circle_color ] []
+                , line [ x1 "50", y1 "50", x2 handX, y2 handY, stroke line_color ] []
                 ]
             , button [ onClick TogglePause ] [ Html.text button_title ]
             ]
