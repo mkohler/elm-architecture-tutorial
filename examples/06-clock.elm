@@ -45,10 +45,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Tick newTime ->
-            if model.paused then
-                ( model, Cmd.none )
-            else
-                ( { model | time = newTime }, Cmd.none )
+            ( { model | time = newTime }, Cmd.none )
 
         TogglePause ->
             ( { model | paused = not model.paused }, Cmd.none )
@@ -60,7 +57,10 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every second Tick
+    if model.paused then
+        Sub.none
+    else
+        Time.every second Tick
 
 
 
