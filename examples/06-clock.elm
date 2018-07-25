@@ -1,9 +1,10 @@
-module Main exposing (..)
+module MyClock exposing (..)
 
 import Html
 import Html exposing (Html, button, div)
 import Html.Events exposing (onClick)
 import Svg exposing (..)
+import Svg.Attributes as SvgA
 import Svg.Attributes exposing (..)
 import Time exposing (Time, second)
 
@@ -67,13 +68,31 @@ subscriptions model =
 -- VIEW
 
 
+calcHand : ( Float, Float ) -> Float -> Float -> ( Float, Float )
+calcHand ( centerX, centerY ) length angleRadians =
+    ( centerX + length * cos angleRadians
+    , centerY + length * sin angleRadians
+    )
+
+
+drawLine ( x1, y1 ) ( x2, y2 ) color =
+    line
+        [ SvgA.x1 (toString x1)
+        , SvgA.y1 (toString y1)
+        , SvgA.x2 (toString x2)
+        , SvgA.y2 (toString y2)
+        , SvgA.stroke color
+        ]
+        []
+
+
 view : Model -> Html Msg
 view model =
     let
         circle_color =
             "#0B79CE"
 
-        line_color =
+        hand_color =
             if model.time == 0 then
                 circle_color
             else
@@ -82,11 +101,14 @@ view model =
         secondAngle =
             turns (Time.inMinutes model.time)
 
-        secondHandX =
-            toString (50 + 40 * cos secondAngle)
+        center =
+            ( 50, 50 )
 
-        secondHandY =
-            toString (50 + 40 * sin secondAngle)
+        length =
+            40
+
+        secondHand =
+            drawLine center (calcHand center length secondAngle) hand_color
 
         button_title =
             if model.paused then
@@ -97,7 +119,7 @@ view model =
         div []
             [ svg [ viewBox "0 0 100 100", width "300px" ]
                 [ circle [ cx "50", cy "50", r "45", fill circle_color ] []
-                , line [ x1 "50", y1 "50", x2 secondHandX, y2 secondHandY, stroke line_color ] []
+                , secondHand
                 ]
             , button [ onClick TogglePause ] [ Html.text button_title ]
             ]
