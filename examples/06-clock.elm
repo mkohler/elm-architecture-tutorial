@@ -75,6 +75,7 @@ calcHand ( centerX, centerY ) length angleRadians =
     )
 
 
+drawLine : ( Float, Float ) -> ( Float, Float ) -> String -> Svg msg
 drawLine ( x1, y1 ) ( x2, y2 ) color =
     line
         [ SvgA.x1 (toString x1)
@@ -82,7 +83,21 @@ drawLine ( x1, y1 ) ( x2, y2 ) color =
         , SvgA.x2 (toString x2)
         , SvgA.y2 (toString y2)
         , SvgA.stroke color
+        , SvgA.strokeWidth "3"
         ]
+        []
+
+
+drawLine2 : ( Float, Float ) -> ( Float, Float ) -> List (Attribute msg) -> Svg msg
+drawLine2 ( x1, y1 ) ( x2, y2 ) attrs =
+    line
+        ([ SvgA.x1 (toString x1)
+         , SvgA.y1 (toString y1)
+         , SvgA.x2 (toString x2)
+         , SvgA.y2 (toString y2)
+         ]
+            ++ attrs
+        )
         []
 
 
@@ -91,6 +106,9 @@ view model =
     let
         circle_color =
             "#0B79CE"
+
+        outerRingColor =
+            "#808080"
 
         hand_color =
             if model.time == 0 then
@@ -105,10 +123,19 @@ view model =
             ( 50, 50 )
 
         length =
-            40
+            44
 
         secondHand =
-            drawLine center (calcHand center length secondAngle) hand_color
+            drawLine2 center (calcHand center length secondAngle) [ SvgA.stroke "#000000" ]
+
+        minuteHand =
+            drawLine center (calcHand center (length * 0.9) (Time.inHours model.time)) hand_color
+
+        hourAngle =
+            (Time.inHours model.time) / 60
+
+        hourHand =
+            drawLine center (calcHand center (length * 0.7) hourAngle) hand_color
 
         button_title =
             if model.paused then
@@ -118,8 +145,12 @@ view model =
     in
         div []
             [ svg [ viewBox "0 0 100 100", width "300px" ]
-                [ circle [ cx "50", cy "50", r "45", fill circle_color ] []
+                [ circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
+                , circle [ cx "50", cy "50", r "45", fill circle_color ] []
                 , secondHand
+                , minuteHand
+                , hourHand
+                , circle [ cx "50", cy "50", r "3", fill hand_color ] []
                 ]
             , button [ onClick TogglePause ] [ Html.text button_title ]
             ]
