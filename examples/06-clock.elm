@@ -75,21 +75,8 @@ calcHand ( centerX, centerY ) length angleRadians =
     )
 
 
-drawLine : ( Float, Float ) -> ( Float, Float ) -> String -> Svg msg
-drawLine ( x1, y1 ) ( x2, y2 ) color =
-    line
-        [ SvgA.x1 (toString x1)
-        , SvgA.y1 (toString y1)
-        , SvgA.x2 (toString x2)
-        , SvgA.y2 (toString y2)
-        , SvgA.stroke color
-        , SvgA.strokeWidth "3"
-        ]
-        []
-
-
-drawLine2 : ( Float, Float ) -> ( Float, Float ) -> List (Attribute msg) -> Svg msg
-drawLine2 ( x1, y1 ) ( x2, y2 ) attrs =
+drawLine : ( Float, Float ) -> ( Float, Float ) -> List (Attribute msg) -> Svg msg
+drawLine ( x1, y1 ) ( x2, y2 ) attrs =
     line
         ([ SvgA.x1 (toString x1)
          , SvgA.y1 (toString y1)
@@ -125,17 +112,26 @@ view model =
         length =
             44
 
+        handStyles =
+            [ SvgA.stroke hand_color, SvgA.strokeWidth "3" ]
+
         secondHand =
-            drawLine2 center (calcHand center length secondAngle) [ SvgA.stroke "#000000" ]
+            drawLine
+                center
+                (calcHand center length secondAngle)
+                [ SvgA.stroke "#000000" ]
 
         minuteHand =
-            drawLine center (calcHand center (length * 0.9) (Time.inHours model.time)) hand_color
+            drawLine
+                center
+                (calcHand center (length * 0.9) (Time.inHours model.time))
+                handStyles
 
         hourAngle =
             (Time.inHours model.time) / 60
 
         hourHand =
-            drawLine center (calcHand center (length * 0.7) hourAngle) hand_color
+            drawLine center (calcHand center (length * 0.7) hourAngle) handStyles
 
         button_title =
             if model.paused then
