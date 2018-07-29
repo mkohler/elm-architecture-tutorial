@@ -90,63 +90,66 @@ drawLine ( x1, y1 ) ( x2, y2 ) attrs =
 
 view : Model -> Html Msg
 view model =
-    let
-        circle_color =
-            "#0B79CE"
+    if model.time == 0 then
+        div [] []
+    else
+        let
+            circle_color =
+                "#0B79CE"
 
-        outerRingColor =
-            "#808080"
+            outerRingColor =
+                "#808080"
 
-        hand_color =
-            if model.time == 0 then
-                circle_color
-            else
-                "#023963"
+            hand_color =
+                if model.time == 0 then
+                    circle_color
+                else
+                    "#023963"
 
-        secondAngle =
-            turns (Time.inMinutes model.time)
+            secondAngle =
+                turns (Time.inMinutes model.time)
 
-        center =
-            ( 50, 50 )
+            center =
+                ( 50, 50 )
 
-        length =
-            44
+            length =
+                44
 
-        handStyles =
-            [ SvgA.stroke hand_color, SvgA.strokeWidth "3" ]
+            handStyles =
+                [ SvgA.stroke hand_color, SvgA.strokeWidth "3" ]
 
-        secondHand =
-            drawLine
-                center
-                (calcHand center length secondAngle)
-                [ SvgA.stroke "#000000" ]
+            secondHand =
+                drawLine
+                    center
+                    (calcHand center length secondAngle)
+                    [ SvgA.stroke "#000000" ]
 
-        minuteHand =
-            drawLine
-                center
-                (calcHand center (length * 0.9) (Time.inHours model.time))
-                handStyles
+            minuteHand =
+                drawLine
+                    center
+                    (calcHand center (length * 0.9) (Time.inHours model.time))
+                    handStyles
 
-        hourAngle =
-            (Time.inHours model.time) / 60
+            hourAngle =
+                (Time.inHours model.time) / 60
 
-        hourHand =
-            drawLine center (calcHand center (length * 0.7) hourAngle) handStyles
+            hourHand =
+                drawLine center (calcHand center (length * 0.7) hourAngle) handStyles
 
-        button_title =
-            if model.paused then
-                "Play"
-            else
-                "Pause"
-    in
-        div []
-            [ svg [ viewBox "0 0 100 100", width "300px" ]
-                [ circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
-                , circle [ cx "50", cy "50", r "45", fill circle_color ] []
-                , secondHand
-                , minuteHand
-                , hourHand
-                , circle [ cx "50", cy "50", r "3", fill hand_color ] []
+            button_title =
+                if model.paused then
+                    "Play"
+                else
+                    "Pause"
+        in
+            div []
+                [ svg [ viewBox "0 0 100 100", width "300px" ]
+                    [ circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
+                    , circle [ cx "50", cy "50", r "45", fill circle_color ] []
+                    , secondHand
+                    , minuteHand
+                    , hourHand
+                    , circle [ cx "50", cy "50", r "3", fill hand_color ] []
+                    ]
+                , button [ onClick TogglePause ] [ Html.text button_title ]
                 ]
-            , button [ onClick TogglePause ] [ Html.text button_title ]
-            ]
