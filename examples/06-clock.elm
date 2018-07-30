@@ -141,15 +141,27 @@ view model =
                     "Play"
                 else
                     "Pause"
+
+            ring =
+                circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
+
+            face =
+                circle [ cx "50", cy "50", r "45", fill circle_color ] []
+
+            hub =
+                circle [ cx "50", cy "50", r "3", fill hand_color ] []
+
+            drawClock =
+                [ ring
+                , face
+                , secondHand
+                , minuteHand
+                , hourHand
+                , hub
+                ]
         in
             div []
                 [ svg [ viewBox "0 0 100 100", width "300px" ]
-                    [ circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
-                    , circle [ cx "50", cy "50", r "45", fill circle_color ] []
-                    , secondHand
-                    , minuteHand
-                    , hourHand
-                    , circle [ cx "50", cy "50", r "3", fill hand_color ] []
-                    ]
+                    drawClock
                 , button [ onClick TogglePause ] [ Html.text button_title ]
                 ]
