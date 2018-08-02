@@ -97,22 +97,28 @@ drawClock model =
             "#808080"
 
         hand_color =
-            if model.time == 0 then
-                circle_color
-            else
-                "#023963"
-
-        secondAngle =
-            turns (Time.inMinutes model.time)
+            "#023963"
 
         center =
             ( 50, 50 )
 
+        handStyles =
+            [ SvgA.stroke hand_color, SvgA.strokeWidth "3" ]
+
         length =
             44
 
-        handStyles =
-            [ SvgA.stroke hand_color, SvgA.strokeWidth "3" ]
+        ring =
+            circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
+
+        face =
+            circle [ cx "50", cy "50", r "45", fill circle_color ] []
+
+        hub =
+            circle [ cx "50", cy "50", r "3", fill hand_color ] []
+
+        secondAngle =
+            turns (Time.inMinutes model.time)
 
         secondHand =
             drawLine
@@ -131,15 +137,6 @@ drawClock model =
 
         hourHand =
             drawLine center (calcHand center (length * 0.7) hourAngle) handStyles
-
-        ring =
-            circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
-
-        face =
-            circle [ cx "50", cy "50", r "45", fill circle_color ] []
-
-        hub =
-            circle [ cx "50", cy "50", r "3", fill hand_color ] []
     in
         [ ring
         , face
