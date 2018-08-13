@@ -75,6 +75,42 @@ calcHand ( centerX, centerY ) length angleRadians =
     )
 
 
+calcTickLine : ( Float, Float ) -> Float -> Float -> Float -> ( ( Float, Float ), ( Float, Float ) )
+calcTickLine ( centerX, centerY ) clockRadius tickLength angleRadians =
+    let
+        innerRadius =
+            clockRadius - tickLength
+
+        outerPoint =
+            calcHand ( centerX, centerY ) clockRadius angleRadians
+
+        innerPoint =
+            calcHand ( centerX, centerY ) innerRadius angleRadians
+    in
+        ( innerPoint, outerPoint )
+
+
+drawTick : ( Float, Float ) -> Float -> Float -> List (Attribute msg) -> Float -> Svg msg
+drawTick center radius length attrs angle =
+    let
+        ( inner, outer ) =
+            calcTickLine center radius length angle
+    in
+        drawLine inner outer attrs
+
+
+drawTicks : ( Float, Float ) -> Float -> Float -> List (Attribute msg) -> List (Svg msg)
+drawTicks ( centerX, centerY ) clockRadius tickLength attrs =
+    let
+        angles =
+            List.map (\x -> toFloat x * 2 * pi / 12.0) (List.range 0 11)
+
+        ctr =
+            ( centerX, centerY )
+    in
+        List.map (drawTick ctr clockRadius tickLength attrs) angles
+
+
 drawLine : ( Float, Float ) -> ( Float, Float ) -> List (Attribute msg) -> Svg msg
 drawLine ( x1, y1 ) ( x2, y2 ) attrs =
     line
@@ -106,7 +142,7 @@ drawClock model =
             [ SvgA.stroke hand_color, SvgA.strokeWidth "3" ]
 
         length =
-            44
+            45
 
         ring =
             circle [ cx "50", cy "50", r "50", fill outerRingColor ] []
@@ -118,7 +154,7 @@ drawClock model =
             circle [ cx "50", cy "50", r "3", fill hand_color ] []
 
         secondAngle =
-            turns (Time.inMinutes model.time)
+            turns (toFloat (round (Time.inMinutes model.time)))
 
         secondHand =
             drawLine
@@ -130,13 +166,16 @@ drawClock model =
             drawLine
                 center
                 (calcHand center (length * 0.9) (Time.inHours model.time))
-                handStyles
+                [ SvgA.stroke hand_color, SvgA.strokeWidth "2" ]
 
         hourAngle =
             (Time.inHours model.time) / 60
 
         hourHand =
             drawLine center (calcHand center (length * 0.7) hourAngle) handStyles
+
+        ticks =
+            drawTicks center length 5 handStyles
     in
         [ ring
         , face
@@ -145,6 +184,7 @@ drawClock model =
         , hourHand
         , hub
         ]
+            ++ ticks
 
 
 view : Model -> Html Msg
